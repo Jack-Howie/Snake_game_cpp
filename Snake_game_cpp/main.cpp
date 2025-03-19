@@ -1,13 +1,15 @@
 // blank main hopefully fixes merge problem
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <conio.h>
 
 bool gameOver;
 const int width = 20;
 const int height = 20;
 int headX, headY, fruitX, fruitY;
+int score = 0;
 enum edirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 edirection dir;
 
@@ -24,27 +26,29 @@ void Setup() {
 }
 
 void Draw() {
-    system("cls");
+    system("cls");//clear screen
     for (int i = 0; i < width + 1; i++) {
-        std::cout << "#";
+        std::cout << "#";//top border
     }
     std::cout << "\n";
 
     for (int i = 0; i < height; i++) {
-        std::cout << "#";
-        for (int j = 0; j < height; j++) {
+        for (int j = 0; j < width; j++) {
             if (j == 0) {
                 std::cout << "#";
             }
+            if (i == headY and j == headX) {
+                std::cout << "O";
+                j++;
+            }
+            else if (i == fruitY and j == fruitX) {
+                std::cout << "F";
+                j++;
+            }            
             if (j == width - 1) {
                 std::cout << "#";
                 std::cout << "\n";
             }
-            //if (j == fruitX) {
-            //    if (i == fruitY) {
-            //        std::cout << "F";
-            //    }
-            //}
             else {
                 std::cout << " ";
             }
@@ -56,11 +60,54 @@ void Draw() {
 }
 
 void Input() {
-
+    if (_kbhit()) {
+        switch (_getch()) {
+        case 'a':
+            dir = LEFT;
+            break;
+        case 'd':
+            dir = RIGHT;
+            break;
+        case 'w':
+            dir = UP;
+            break;
+        case 's':
+            dir = DOWN;
+            break;
+        case 'x':
+            gameOver = true;
+            break;
+        }
+    }
 }
 
 void Logic() {
-
+    switch (dir) {
+    case STOP:
+        break;
+    case RIGHT:
+        headX++;
+        break;
+    case UP:
+        headY--;
+        break;
+    case DOWN:
+        headY++;
+        break;
+    case LEFT:
+        headX--;
+        break;
+    default:
+        break;
+    }
+    if (headX == '#' or headY == '#') {
+        gameOver = true;
+    }
+    if (headX == fruitX and headY == fruitY) {
+        score++;
+        fruitX = rand() % width;
+        fruitY = rand() % height;
+    }
 }
 
 int main(){
@@ -71,6 +118,6 @@ int main(){
         Logic();
 
     }
-    glfwTerminate();
+    //glfwTerminate();
     return 0;
 }
